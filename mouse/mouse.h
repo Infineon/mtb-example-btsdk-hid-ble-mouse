@@ -1,10 +1,10 @@
 /*
- * Copyright 2016-2020, Cypress Semiconductor Corporation or a subsidiary of
- * Cypress Semiconductor Corporation. All Rights Reserved.
+ * Copyright 2016-2021, Cypress Semiconductor Corporation (an Infineon company) or
+ * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
- * materials ("Software"), is owned by Cypress Semiconductor Corporation
- * or one of its subsidiaries ("Cypress") and is protected by and subject to
+ * materials ("Software") is owned by Cypress Semiconductor Corporation
+ * or one of its affiliates ("Cypress") and is protected by and subject to
  * worldwide patent protection (United States and foreign),
  * United States copyright laws and international treaty provisions.
  * Therefore, you may use this Software only as provided in the license
@@ -13,7 +13,7 @@
  * If no EULA applies, Cypress hereby grants you a personal, non-exclusive,
  * non-transferable license to copy, modify, and compile the Software
  * source code solely for use in connection with Cypress's
- * integrated circuit products. Any reproduction, modification, translation,
+ * integrated circuit products.  Any reproduction, modification, translation,
  * compilation, or representation of this Software except as specified
  * above is prohibited without the express written permission of Cypress.
  *
@@ -39,7 +39,7 @@
 #ifndef __MOUSE_H__
 #define __MOUSE_H__
 
-#include "app.h"
+#include "wiced.h"
 
 #pragma pack(1)
 /// Boot mode mouse report
@@ -93,23 +93,9 @@ typedef struct
 #pragma pack()
 
 #ifdef MOUSE_REPORT_SUPPORT
- #define MOTION_SUPPORT        // Mouse report has x,y
- #define CLICK_SUPPORT         // Mouse report has clicks
- #define SCROLL_SUPPORT        // Mouse report has scroll
-
- #if defined(MOUSE_PLATFORM)
-  #define SCROLL_SUPPORT       // Quadrature driver
-  #define CLICK_USE_KEYSCAN    // Use keyscan for click
-  #define USE_COMBO_PAIRING    // Use combo key for pairing
- #else
-  #undef  SCROLL_SUPPORT       // We cannot support scroll
-  #define CLICK_USE_BUTTON     // Use Buttons for click
-  #if defined(MOTION_SUPPORT)
-   #define USE_LSM9DS1         // STMicroelectorics motion sensor driver
+ #ifdef USE_LSM9DS1
    #include "lsm9ds1.h"
-  #endif
  #endif
-
  #include "hidd_lib.h"
  #include "scroll.h"
  #include "motion.h"
