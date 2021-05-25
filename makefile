@@ -47,7 +47,8 @@ VERBOSE=
 TARGET=CYW920735Q60EVB-01
 
 SUPPORTED_TARGETS = \
-  CYW920735Q60EVB-01
+  CYW920735Q60EVB-01 \
+  CYW920835M2EVB-01
 
 #
 # Advanced Configuration
@@ -97,7 +98,7 @@ TESTING_USING_HCI_DEFAULT=1
 #  SLEEP_ALLOWED=1  Allow sleep without shutdown
 #  SLEEP_ALLOWED=2  Allow sleep with shutdown
 #
-ifeq ($(TARGET), CYW920735Q60EVB-01)
+ifneq ($(filter CYW920835M2EVB-01 CYW920735Q60EVB-01,$(TARGET)),)
  SLEEP_ALLOWED_DEFAULT=1
 else
  SLEEP_ALLOWED_DEFAULT=2
@@ -186,7 +187,7 @@ endif
 ifeq ($(OTA_FW_UPGRADE),1)
  # DEFINES
  CY_APP_DEFINES += -DOTA_FIRMWARE_UPGRADE
- CY_APP_DEFINES += -DDISABLED_SLAVE_LATENCY_ONLY
+ CY_APP_DEFINES += -DDISABLED_PERIPHERAL_LATENCY_ONLY
  CY_APP_DEFINES += -DOTA_SKIP_CONN_PARAM_UPDATE
  ifeq ($(OTA_SEC_FW_UPGRADE), 1)
   CY_APP_DEFINES += -DOTA_SECURE_FIRMWARE_UPGRADE
@@ -249,6 +250,6 @@ CY_BT_APP_TOOLS=BTSpy ClientControl
 
 -include internal.mk
 ifeq ($(filter $(TARGET),$(SUPPORTED_TARGETS)),)
- $(error TARGET $(TARGET) not supported. Please use one of $(SUPPORTED_TARGETS))
+$(error TARGET $(TARGET) not supported for this application. Edit SUPPORTED_TARGETS in the code example makefile to add new BSPs)
 endif
 include $(CY_TOOLS_DIR)/make/start.mk

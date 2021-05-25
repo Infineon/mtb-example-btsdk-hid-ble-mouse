@@ -539,7 +539,7 @@ void app_enter_pairing()
     hidd_blelink_allowDiscoverable();
 #else
     hidd_link_virtual_cable_unplug();
-    hidd_enter_pairing();
+    hidd_pairing();
 #endif
 }
 

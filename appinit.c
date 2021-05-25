@@ -51,7 +51,7 @@ static const wiced_bt_cfg_buf_pool_t wiced_bt_hid_cfg_buf_pools[WICED_BT_CFG_NUM
 /*  { buf_size, buf_count } */
     { 64,       4   },      /* Small Buffer Pool */
     { 100,      30  },      /* Medium Buffer Pool (used for HCI & RFCOMM control messages, min recommended size is 360) */
-#ifdef CYW20735B1           // we need to allocate more buffer to ensure audio quality
+#if is_20735Family          // we need to allocate more buffer to ensure audio quality
     { 300,      50  },      /* Large Buffer Pool  (used for HCI ACL messages) */
 #else                       // 208xx doesn't have enough RAM. audio quality is problematic
     { 300,      12  },      /* Large Buffer Pool  (used for HCI ACL messages) */
