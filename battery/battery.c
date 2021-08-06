@@ -56,6 +56,7 @@ BatteryReport batRpt={RPT_ID_IN_BATTERY,{100}};
  *******************************************************************************/
 static void Bat_batLevelChangeNotification(uint32_t newLevel)
 {
+    // report only if the battery level is changed
     if (batRpt.level[0] != newLevel)
     {
         WICED_BT_TRACE("\nbat level changed to %d", newLevel);
@@ -65,7 +66,7 @@ static void Bat_batLevelChangeNotification(uint32_t newLevel)
     }
 }
 
-/*******************************************************************************
+/********************************************************************************
  * Function Name: void bat_init
  ********************************************************************************
  * Summary: initialize battery report

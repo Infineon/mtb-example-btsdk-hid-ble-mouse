@@ -643,6 +643,10 @@ void app_transportStateChangeNotification(uint32_t newState)
             app.enter_pairing_pending = 0;
             app_enter_pairing();
         }
+
+        //allow Shut Down Sleep (SDS) only if we are not attempting reconnect
+        if (!hidd_link_is_reconnect_timer_running())
+            hidd_deep_sleep_not_allowed(2000); // 2 seconds. timeout in ms
         break;
 
     case HIDLINK_LE_DISCOVERABLE:
@@ -731,16 +735,13 @@ wiced_result_t app_start(void)
 
     /* transport init */
     bt_init();
-
     hidd_sleep_configure(&hidd_link_sleep_config);
 
     /* component/peripheral init */
     bat_init(APP_shutdown);
     mouse_init();
-    hidd_link_init();
 
-    wiced_hal_mia_enable_mia_interrupt(TRUE);
-    wiced_hal_mia_enable_lhl_interrupt(TRUE);//GPIO interrupt
+    hidd_link_init(); // linitialize link last
 
     WICED_BT_TRACE("\nFree RAM bytes=%d bytes", wiced_memory_get_free_bytes());
 
