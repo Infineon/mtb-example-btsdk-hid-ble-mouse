@@ -1,5 +1,5 @@
 #
-# Copyright 2016-2021, Cypress Semiconductor Corporation (an Infineon company) or
+# Copyright 2016-2022, Cypress Semiconductor Corporation (an Infineon company) or
 # an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
 #
 # This software, including source code, documentation and related
@@ -52,6 +52,9 @@ SUPPORTED_TARGETS = \
   CYBLE-343072-EVAL-M2B \
   CYBLE-333074-EVAL-M2B
 
+#  CYW955572BTEVK-01 \
+
+
 #
 # Advanced Configuration
 #
@@ -72,9 +75,8 @@ FEATURES=
 #
 # Define basic library COMPONENTS
 #
-COMPONENTS +=bsp_design_modus
+COMPONENTS += bsp_design_modus
 COMPONENTS += hidd_lib2
-CY_APP_PATCH_LIBS += wiced_hidd_lib.a
 
 #ifeq ($(TARGET),CYW920735Q60EVB-01)
 # # use app specific design.modus
@@ -148,6 +150,10 @@ CY_APP_DEFINES = \
   -DWICED_BT_TRACE_ENABLE \
   -DLED_SUPPORT=$(LED) \
   -DSLEEP_ALLOWED=$(SLEEP_ALLOWED)
+
+ifneq ($(TARGET), CYW955572BTEVK-01)
+CY_APP_PATCH_LIBS += wiced_hidd_lib.a
+endif
 
 ifeq ($(TARGET), CYW920820REF-MS-01)
  CY_APP_DEFINES += -DMOUSE_PLATFORM

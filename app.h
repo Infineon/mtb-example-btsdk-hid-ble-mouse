@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2021, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2016-2022, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -43,10 +43,11 @@
 #ifndef __APP_H__
 #define __APP_H__
 #include "wiced.h"
-#include "wiced_hidd_lib.h"
 #include "wiced_platform.h"
 #include "wiced_bt_trace.h"
 #include "hidd_lib.h"
+#include "btstack.h"
+
 /*******************************************************************************
 * Types and Defines
 *******************************************************************************/
@@ -71,13 +72,21 @@
  #endif
 #endif
 
-#define LED_RED             WICED_PLATFORM_LED_1
-#define LED_GREEN           WICED_PLATFORM_LED_2
+#ifdef WICED_PLATFORM_LED_1
+ #define LED_RED             WICED_PLATFORM_LED_1
+#else
+ #define LED_RED             WICED_P26
+#endif
+
+#ifdef WICED_PLATFORM_LED_2
+ #define LED_GREEN          WICED_PLATFORM_LED_2
+#else
+ #define LED_GREEN          LED_RED
+#endif
 
 #define LED_ERROR           LED_RED
 #define LED_LE_LINK         LED_GREEN
 
-typedef void (app_poll_callback_t)(void);
 /*******************************************************************************
  * Report ID defines
  ********************************************************************************/

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2021, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2016-2022, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -57,7 +57,6 @@
 * See the readme for instructions.
 */
 #include "app.h"
-#include "wiced_hal_mia.h"
 #include "wiced_memory.h"
 
 #define RECOVERY_COUNT 3
@@ -192,8 +191,8 @@ static void APP_shutdown(void)
         hidd_link_disconnect();
     }
     // Disable Interrupts
-    wiced_hal_mia_enable_mia_interrupt(FALSE);
-    wiced_hal_mia_enable_lhl_interrupt(FALSE);
+    hidd_enable_interrupt(FALSE);
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -221,7 +220,7 @@ uint8_t APP_pollActivityUser(void)
     uint8_t status;
 
     // Poll the hardware for events
-    wiced_hal_mia_pollHardware();
+    app_poll_events();
 
     mouse_poll();
 
@@ -363,7 +362,7 @@ static void APP_generateAndTxReports(void)
         }
 
         // Continue report generation as long as the transport has room and we have events to process
-        while ((wiced_bt_buffer_poolutilization (HCI_ACL_POOL_ID) < 80) &&
+        while ( hidd_buf_pool_is_sufficient() &&
                ((curEvent = (app_queue_t *)wiced_hidd_event_queue_get_current_element(&app.eventQueue)) != NULL))
         {
             // Further processing depends on the event type
@@ -442,7 +441,7 @@ static void APP_pollReportUserActivity(void)
         }
 
         // Generate a report
-        if(!bt_cfg.security_requirement_mask || hidd_link_is_encrypted())
+        if(!app_cfg_sec_mask() || hidd_link_is_encrypted())
         {
             APP_generateAndTxReports();
         }
@@ -519,14 +518,19 @@ static void APP_move_mouse_timer_timeout( uint32_t arg )
 /////////////////////////////////////////////////////////////////////////////////
 static void APP_hci_key_event(uint8_t keyCode, wiced_bool_t keyDown)
 {
-    if (keyCode==KEY_CONNECT)
-    {
+    switch (keyCode) {
+    case KEY_CONNECT:
         APP_connect_button(CONNECT_KEY_INDEX, keyDown);
-    }
-    else if (keyCode==KEY_MOTION)
-    {
+        break;
+
+    case KEY_MOTION:
         WICED_BT_TRACE("\nMove mouse command from ClientControl");
         APP_move_mouse_timer_timeout(0);
+        break;
+
+    default:
+        WICED_BT_TRACE("\nFunction is not available in this platform");
+        break;
     }
 }
 #endif
@@ -728,10 +732,10 @@ wiced_result_t app_start(void)
     wiced_hidd_event_queue_init(&app.eventQueue, (uint8_t *)&app.events, APP_QUEUE_SIZE, APP_QUEUE_MAX);
 
     // register applicaton callbacks
-    hidd_register_app_callback(&appCallbacks);
+    hidd_link_register_callbacks(&appCallbacks);
 
     /* Client Control key detected callback */
-    hci_control_register_key_handler(APP_hci_key_event);
+    hidd_hci_control_register_key_handler(APP_hci_key_event);
 
     /* transport init */
     bt_init();
@@ -746,4 +750,45 @@ wiced_result_t app_start(void)
     WICED_BT_TRACE("\nFree RAM bytes=%d bytes", wiced_memory_get_free_bytes());
 
     return WICED_BT_SUCCESS;
+}
+
+/*
+ *  Entry point to the application. Set device configuration and start BT
+ *  stack initialization.  The actual application initialization will happen
+ *  when stack reports that BT device is ready.
+ */
+void application_start( void )
+{
+    extern const wiced_platform_led_config_t platform_led[];
+    extern const size_t led_count;
+
+    // Initialize LED/UART for debug
+    wiced_set_debug_uart(WICED_ROUTE_DEBUG_TO_PUART);
+    hidd_led_init(led_count, platform_led);
+
+    app_init(app_start, NULL);
+
+#if (SLEEP_ALLOWED == 3)
+    hidd_allowed_hidoff(TRUE);
+#endif
+
+    WICED_BT_TRACE("\nDEV=%d Version:%d.%d Rev=%d Build=%d",hidd_chip_id(), WICED_SDK_MAJOR_VER, WICED_SDK_MINOR_VER, WICED_SDK_REV_NUMBER, WICED_SDK_BUILD_NUMBER);
+    WICED_BT_TRACE("\nSLEEP_ALLOWED=%d",SLEEP_ALLOWED);
+    WICED_BT_TRACE("\nLED=%d",LED_SUPPORT);
+
+#ifdef OTA_FIRMWARE_UPGRADE
+    WICED_BT_TRACE("\nOTA_FW_UPGRADE");
+ #ifdef OTA_SECURE_FIRMWARE_UPGRADE
+    WICED_BT_TRACE("\nOTA_SEC_FW_UPGRADE");
+ #endif
+#endif
+
+#ifdef LE_LOCAL_PRIVACY_SUPPORT
+    WICED_BT_TRACE("\nLE_LOCAL_PRIVACY_SUPPORT");
+#endif
+
+#ifdef FASTPAIR_ENABLE
+    WICED_BT_TRACE("\nFASTPAIR_ENABLE");
+#endif
+
 }

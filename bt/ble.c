@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2021, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2016-2022, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -202,14 +202,14 @@ attribute_t blehid_gattAttributes[] =
 
     {
         HANDLE_APP_GAP_SERVICE_CHAR_DEV_APPEARANCE_VAL,
-        sizeof(bt_cfg.gatt_cfg.appearance),
-        &bt_cfg.gatt_cfg.appearance
+        sizeof(app_cfg_appearance),
+        &app_cfg_appearance
     },
 
     {
         HANDLE_APP_GAP_SERVICE_CHAR_PERI_PREFER_CONNPARAM_VAL,
         8,
-        &bt_cfg.ble_scan_cfg.conn_min_interval
+        &app_cfg_conn_param
     },
 
     {
@@ -1074,7 +1074,7 @@ static void BLE_init_fast_pair(void)
     fastpair_conf.appended_adv_data.elem_num    = 1;
 
     /* Initialize Google Fast Pair Service. */
-    if (hidd_gatts_gfps_init(&fastpair_conf) == WICED_FALSE)
+    if (hidd_gatt_gfps_init(&fastpair_conf) == WICED_FALSE)
     {
         WICED_BT_TRACE("wiced_bt_gfps_provider_init fail\n");
     }
@@ -1108,7 +1108,7 @@ static void BLE_setUpAdvData(void)
     // Appearance
     app_adv_elem[1].advert_type  = BTM_BLE_ADVERT_TYPE_APPEARANCE;
     app_adv_elem[1].len          = sizeof(uint16_t);
-    app_adv_elem[1].p_data       = (uint8_t *)&bt_cfg.gatt_cfg.appearance;
+    app_adv_elem[1].p_data       = (uint8_t *)&app_cfg_appearance;
 
     //16 bits Service: UUID_SERVCLASS_LE_HID
     app_adv_elem[2].advert_type  = BTM_BLE_ADVERT_TYPE_16SRV_COMPLETE;
@@ -1203,7 +1203,7 @@ void ble_init()
     WICED_BT_TRACE("\nble_init");
 
     /*  LE GATT DB Initialization  */
-    hidd_gatts_init( reportModeGattMap, sizeof(reportModeGattMap)/sizeof(wiced_blehidd_report_gatt_characteristic_t),
+    hidd_gatt_init( reportModeGattMap, sizeof(reportModeGattMap)/sizeof(wiced_blehidd_report_gatt_characteristic_t),
                      blehid_db_data, sizeof(blehid_db_data),
                      blehid_gattAttributes, blehid_gattAttributes_size,
                      NULL, NULL );
