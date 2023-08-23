@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2016-2023, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -61,9 +61,9 @@ wiced_bt_cfg_settings_t bt_cfg =
         .page_scan_window                = WICED_BT_CFG_DEFAULT_PAGE_SCAN_WINDOW             /**< Page scan window (0 to use default) */
     },
 
-    .ble_scan_cfg = /* BLE scan settings  */
+    .ble_scan_cfg = /* LE scan settings  */
     {
-        .scan_mode                       = BTM_BLE_SCAN_MODE_PASSIVE,                        /**< BLE scan mode (BTM_BLE_SCAN_MODE_PASSIVE, BTM_BLE_SCAN_MODE_ACTIVE, or BTM_BLE_SCAN_MODE_NONE) */
+        .scan_mode                       = BTM_BLE_SCAN_MODE_PASSIVE,                        /**< LE scan mode (BTM_BLE_SCAN_MODE_PASSIVE, BTM_BLE_SCAN_MODE_ACTIVE, or BTM_BLE_SCAN_MODE_NONE) */
 
         /* Advertisement scan configuration */
         .high_duty_scan_interval         = WICED_BT_CFG_DEFAULT_HIGH_DUTY_SCAN_INTERVAL,     /**< High duty scan interval */
@@ -90,7 +90,7 @@ wiced_bt_cfg_settings_t bt_cfg =
         .conn_supervision_timeout        = 500,                                              /**< Connection link supervision timeout */
     },
 
-    .ble_advert_cfg = /* BLE advertisement settings */
+    .ble_advert_cfg = /* LE advertisement settings */
     {
         .channel_map                     = BTM_BLE_ADVERT_CHNL_37 |                          /**< Advertising channel map */
                                            BTM_BLE_ADVERT_CHNL_38 |
@@ -191,7 +191,7 @@ wiced_bt_cfg_settings_t bt_cfg =
 #else
     .rpa_refresh_timeout                = WICED_BT_CFG_DEFAULT_RANDOM_ADDRESS_NEVER_CHANGE,  /**< Interval of  random address refreshing - secs */
 #endif
-    /* BLE Filter Accept List size */
+    /* LE Filter Accept List size */
     .ble_filter_accept_list_size                = 2,                                                 /**< Maximum number of Filter Accept List devices allowed. Cannot be more than 128 */
 #endif
 
@@ -214,7 +214,7 @@ const wiced_bt_cfg_buf_pool_t wiced_bt_hid_cfg_buf_pools[WICED_BT_CFG_NUM_BUF_PO
 /*  { buf_size, buf_count } */
     { 64,       4   },      /* Small Buffer Pool */
     { 100,      30  },      /* Medium Buffer Pool (used for HCI & RFCOMM control messages, min recommended size is 360) */
-#if is_20735Family          // we need to allocate more buffer to ensure audio quality
+#if is_20835Family          // we need to allocate more buffer to ensure audio quality
     { 300,      50  },      /* Large Buffer Pool  (used for HCI ACL messages) */
 #else                       // 20819 doesn't have enough RAM. audio quality is problematic
     { 300,      12  },      /* Large Buffer Pool  (used for HCI ACL messages) */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2016-2023, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -47,7 +47,7 @@ typedef struct {
     uint16_t state;
 } button_t;
 
-button_t button = {};
+button_t button = {0};
 
 #ifdef USE_COMBO_PAIRING
 /////////////////////////////////////////////////////////////////////////////////
@@ -59,7 +59,7 @@ static void BUTTON_combo_key_timeout( uint32_t  )
     case CONNECT_COMBO:
         button.state = 0;
         mouse_button_state_changed((uint8_t) button.state);
-        hidd_led_off(LED_RED);
+        hidd_led_off(LED_RED_INDEX);
         app_enter_pairing();
         break;
     }
@@ -73,12 +73,12 @@ static void BUTTON_state_changed()
 #ifdef USE_COMBO_PAIRING
     switch (button.state) {
     case CONNECT_COMBO:
-        hidd_led_on(LED_RED);
+        hidd_led_on(LED_RED_INDEX);
         WICED_BT_TRACE("\nStart Connect timer");
         wiced_start_timer(&button.combokey_timer, CONNECT_COMBO_HOLD_TIME);
         break;
     default:
-        hidd_led_off(LED_RED);
+        hidd_led_off(LED_RED_INDEX);
         if (wiced_is_timer_in_use(&button.combokey_timer))
         {
             WICED_BT_TRACE("\nStop connect timer");

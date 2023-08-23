@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2016-2023, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -35,7 +35,7 @@
  *
  * ble.c
  *
- * This file provides BLE transport functions
+ * This file provides Bluetooth LE transport functions
  *
  */
 #ifdef BLE_SUPPORT
@@ -82,7 +82,7 @@ const uint8_t anti_spoofing_private_key[] = "";
 /******************************************************************************
  * data for handle attrib value
  ******************************************************************************/
-static uint8_t dev_pnp_id[]               ={0x01, 0x31, 0x01, 0xB4, 0x04, 0x01, 0x00}; //BT SIG, cypress semiconductor, 0x04B4, 0x0001
+static uint8_t dev_pnp_id[]               ={0x01, 0x31, 0x01, 0xB4, 0x04, 0x01, 0x00}; //Bluetooth SIG, cypress semiconductor, 0x04B4, 0x0001
 static char dev_char_mfr_name_value[]     = "Cypress Semiconductor";
 
 static uint8_t rpt_ref_std_key_input[]      = {RPT_ID_IN_STD_KEY,   WICED_HID_REPORT_TYPE_INPUT};
@@ -94,13 +94,13 @@ static uint8_t dev_hid_information[] = {0x00, 0x01, 0x00, 0x00};      // Verison
 static uint16_t dev_battery_service_uuid = UUID_CHARACTERISTIC_BATTERY_LEVEL;
 
 /*****************************************************************************
- * data for ble module
+ * data for LE module
  ****************************************************************************/
 typedef struct {
     wiced_timer_t conn_param_update_timer;
 } ble_data_t;
 
-static ble_data_t ble = {};
+static ble_data_t ble = {0};
 
 /*****************************************************************************
  * This is the report map for HID Service
@@ -321,7 +321,7 @@ const uint16_t blehid_gattAttributes_size = sizeof(blehid_gattAttributes)/sizeof
 
 
 /*****************************************************************************
- * This is the GATT database for the BLE HID Remote application.  It defines
+ * This is the GATT database for the LE HID Remote application.  It defines
  * services, characteristics and descriptors supported by the sensor.  Each
  * attribute in the database has a handle, (characteristic has two, one for
  * characteristic itself, another for the value).  The handles are used by
@@ -1029,7 +1029,7 @@ static void BLE_init_fast_pair(void)
     wiced_bt_gfps_provider_conf_t fastpair_conf = {0};
     static wiced_bt_ble_advert_elem_t app_adv_elem;
 
-    /* set Tx power level data type in ble advertisement */
+    /* set Tx power level data type in LE advertisement */
  #if defined(CYW20719B2) || defined(CYW20721B2) || defined(CYW20819A1) || defined (CYW20820A1)
     fastpair_conf.ble_tx_pwr_level = wiced_bt_cfg_settings.default_ble_power_level;
  #else
@@ -1065,7 +1065,7 @@ static void BLE_init_fast_pair(void)
     /* NVRAM id for Account Key list */
     fastpair_conf.account_key_list_nvram_id = VS_ID_GFPS_ACCOUNT_KEY;
 
-    /* BLE advertisement data appended to fast pair advertisement data */
+    /* LE advertisement data appended to fast pair advertisement data */
     app_adv_elem.advert_type    = BTM_BLE_ADVERT_TYPE_NAME_COMPLETE;
     app_adv_elem.len            = sizeof(BT_LOCAL_NAME)-1;
     app_adv_elem.p_data         = (uint8_t *)dev_local_name;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2016-2023, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -52,14 +52,14 @@
 * Types and Defines
 *******************************************************************************/
 #if defined(BLE_SUPPORT) && defined(BR_EDR_SUPPORT)
- #define BT_LOCAL_NAME "CY MOUSE"
+ #define BT_LOCAL_NAME "IFX DUAL MOUSE"
 #elif defined(BLE_SUPPORT)
- #define BT_LOCAL_NAME "CY LE MOUSE"
+ #define BT_LOCAL_NAME "IFX LE MOUSE"
 #else
- #define BT_LOCAL_NAME "CY BT MOUSE"
+ #define BT_LOCAL_NAME "IFX CLASSIC MOUSE"
 #endif
 
-#if is_20735Family
+#if is_20835Family
  #define NUM_KEYSCAN_ROWS    5  // Num of Rows in keyscan matrix
  #define NUM_KEYSCAN_COLS    4  // Num of Cols in keyscan matrix
  #define CONNECT_KEY_INDEX   18 // need to find out from hardware
@@ -67,25 +67,13 @@
  #define NUM_KEYSCAN_ROWS    7  // Num of Rows in keyscan matrix
  #define NUM_KEYSCAN_COLS    7  // Num of Cols in keyscan matrix
  #define CONNECT_KEY_INDEX   29 // need to find out from hardware
- #if !defined(REMOTE_PLATFORM)
-  #define FAKE_CONNECT_KEY_INDEX   8 // need to find out from hardware
- #endif
 #endif
 
-#ifdef WICED_PLATFORM_LED_1
- #define LED_RED             WICED_PLATFORM_LED_1
-#else
- #define LED_RED             WICED_P26
-#endif
+#define LED_RED_INDEX        0
+#define LED_GREEN_INDEX      1
 
-#ifdef WICED_PLATFORM_LED_2
- #define LED_GREEN          WICED_PLATFORM_LED_2
-#else
- #define LED_GREEN          LED_RED
-#endif
-
-#define LED_ERROR           LED_RED
-#define LED_LE_LINK         LED_GREEN
+#define LINK_LED             LED_GREEN_INDEX
+#define RED_LED              LED_RED_INDEX
 
 /*******************************************************************************
  * Report ID defines
@@ -214,7 +202,7 @@ void app_enter_pairing(void);
  * Function Name: app_start
  ********************************************************************************
  * Summary: This is application start function. After system initialization is done, when the
- *          bt management calls with BTM_ENABLED_EVT, this function is called to
+ *          Bluetooth management calls with BTM_ENABLED_EVT, this function is called to
  *          start application
  *
  * Parameters:

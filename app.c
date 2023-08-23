@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2016-2023, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -33,9 +33,9 @@
 
 /** @file
 *
-* BLE Mouse
+* Bluetooth LE Mouse
 *
-* The BLE Mouse application is a single chip SoC compliant with HID over GATT Profile (HOGP).
+* The Bluetooth LE Mouse application is a single chip SoC compliant with HID over GATT Profile (HOGP).
 *
 * During initialization the app registers with LE stack, WICED HID Device Library and
 * keyscan HW to receive various notifications including bonding complete, connection
@@ -135,7 +135,7 @@ static uint8_t APP_getProtocol(void)
  *******************************************************************************/
 uint8_t APP_setProtocol(uint8_t newProtocol)
 {
-    ble_setProtocol(newProtocol);   // for BLE table selection
+    ble_setProtocol(newProtocol);   // for LE table selection
     app.protocol = newProtocol;
     return HID_PAR_HANDSHAKE_RSP_SUCCESS;
 }
@@ -410,7 +410,7 @@ static void APP_generateAndTxReports(void)
  *     transports
  *   - If the active transport is connected, requests generation of reports via
  *     generateAndTransmitReports()
- *   - Does connect button polling and informs the BT transport once the connect
+ *   - Does connect button polling and informs the Bluetooth transport once the connect
  *     button has been held for the configured amount of time.
  *  Note: transport may be NULL if no transport context is required - like when
  *  none
@@ -610,14 +610,14 @@ void app_transportStateChangeNotification(uint32_t newState)
 {
     int16_t flags;
     WICED_BT_TRACE("\nTransport state changed to ", newState);
-    hidd_led_blink_stop(LED_LE_LINK);
+    hidd_led_blink_stop(LINK_LED);
 
     hidd_set_deep_sleep_allowed(WICED_FALSE);
 
     switch (newState) {
     case HIDLINK_LE_CONNECTED:
         WICED_BT_TRACE("connected");
-        hidd_led_on(LED_LE_LINK);
+        hidd_led_on(LINK_LED);
 
         hidd_blelink_enable_poll_callback(WICED_TRUE);
 
@@ -640,7 +640,7 @@ void app_transportStateChangeNotification(uint32_t newState)
 
     case HIDLINK_LE_DISCONNECTED:
         WICED_BT_TRACE("disconnected");
-        hidd_led_off(LED_LE_LINK);
+        hidd_led_off(LINK_LED);
         hidd_blelink_enable_poll_callback(WICED_FALSE);
         if (app.enter_pairing_pending)
         {
@@ -655,12 +655,12 @@ void app_transportStateChangeNotification(uint32_t newState)
 
     case HIDLINK_LE_DISCOVERABLE:
         WICED_BT_TRACE("discoverable");
-        hidd_led_blink(LED_LE_LINK, 0, 500);
+        hidd_led_blink(LINK_LED, 0, 500);
         break;
 
     case HIDLINK_LE_RECONNECTING:
         WICED_BT_TRACE("reconnecting");
-        hidd_led_blink(LED_LE_LINK, 0, 200);     // faster blink LINK line to indicate reconnecting
+        hidd_led_blink(LINK_LED, 0, 200);     // faster blink LINK line to indicate reconnecting
         break;
 
     case HIDLINK_LE_ADVERTISING_IN_uBCS_DIRECTED:
@@ -713,7 +713,7 @@ static hidd_link_callback_t appCallbacks =
  * Function Name: app_start()
  ********************************************************************************
  * Summary: This is application start function. After system is up, when the
- *          bt management calls with BTM_ENABLED_EVT, this function is called to
+ *          Bluetooth management calls with BTM_ENABLED_EVT, this function is called to
  *          start application
  *
  * Parameters:
@@ -741,6 +741,14 @@ wiced_result_t app_start(void)
     bt_init();
     hidd_sleep_configure(&hidd_link_sleep_config);
 
+#if (MOUSE_XY_DATA_SIZE==16)
+    char mouse_capa=HCI_CONTROL_HIDD_MOUSE_SUPPORT | HCI_CONTROL_HIDD_MOUSE_16_BIT;
+#elif (MOUSE_XY_DATA_SIZE==12)
+    char mouse_capa=HCI_CONTROL_HIDD_MOUSE_SUPPORT | HCI_CONTROL_HIDD_MOUSE_12_BIT;
+#else
+    char mouse_capa=HCI_CONTROL_HIDD_MOUSE_SUPPORT | HCI_CONTROL_HIDD_MOUSE_8_BIT;
+#endif
+    hidd_hci_control_set_capability(0, mouse_capa, 0);
     /* component/peripheral init */
     bat_init(APP_shutdown);
     mouse_init();
@@ -753,9 +761,9 @@ wiced_result_t app_start(void)
 }
 
 /*
- *  Entry point to the application. Set device configuration and start BT
+ *  Entry point to the application. Set device configuration and start Bluetooth
  *  stack initialization.  The actual application initialization will happen
- *  when stack reports that BT device is ready.
+ *  when stack reports that Bluetooth device is ready.
  */
 void application_start( void )
 {

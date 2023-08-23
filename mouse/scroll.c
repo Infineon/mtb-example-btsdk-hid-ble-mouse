@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2016-2023, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -136,7 +136,7 @@ void scroll_init()
                                    USE_P28_QOC,
                                    USE_Y_AXIS);
   #else
-    // 20735 configure P29 for QOC, Z-Axis (P6,P7) based on HW schematics in referenced design.
+    // 20835 configure P29 for QOC, Z-Axis (P6,P7) based on HW schematics in referenced design.
                                    USE_P29_QOC,
                                    USE_Z_AXIS);
   #endif

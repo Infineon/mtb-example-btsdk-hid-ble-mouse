@@ -1,6 +1,6 @@
 /* Inactivity threshold register */
 /*
- * Copyright 2016-2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2016-2023, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -377,7 +377,7 @@ typedef struct {
   uint8_t disabled:1;
 } lsm9ds1_t;
 
-static lsm9ds1_t lsm9ds1={};
+static lsm9ds1_t lsm9ds1={0};
 
 /*******************************************************************************
  * Function Name: LSMDS1_read()
