@@ -138,6 +138,21 @@ void ble_updateClientConfFlags(uint16_t enable, uint16_t featureBit);
  *******************************************************************************/
 void ble_setProtocol(uint8_t newProtocol);
 
+/********************************************************************************
+ * Function Name: UINT8 ble_params_is_expected()
+ ********************************************************************************
+ * Summary: Check the RCU ble parameters is updated to expected setting or not
+ *
+ * Parameters:
+ *  none
+ *
+ * Return:
+ *  FALSE : not expected configuration ble parameters
+ *  TRUE  : expected configuration ble parameters
+ *
+ *******************************************************************************/
+wiced_bool_t ble_params_is_expected(void);
+
 /*******************************************************************************
  * Function Name: void ble_init()
  ********************************************************************************

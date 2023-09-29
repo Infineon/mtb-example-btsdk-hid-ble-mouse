@@ -267,6 +267,9 @@ static uint32_t APP_sleep_handler(wiced_sleep_poll_type_t type )
         case WICED_SLEEP_POLL_SLEEP_PERMISSION:
  #if SLEEP_ALLOWED > 1
             ret = WICED_SLEEP_ALLOWED_WITH_SHUTDOWN;
+            // If ble connection is established, wait the params update successfully
+            // (slow ble connection parameters with latency mode)
+            if ( hidd_link_is_connected() && !ble_params_is_expected() )
  #else
             ret = WICED_SLEEP_ALLOWED_WITHOUT_SHUTDOWN;
  #endif

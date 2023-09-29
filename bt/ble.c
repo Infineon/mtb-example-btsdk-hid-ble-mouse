@@ -1010,8 +1010,12 @@ static void BLE_transportStateChangeNotification(uint32_t newState)
             WICED_BT_TRACE("\nhost NOT found!");
         }
 
-        //start 15 second timer to make sure connection param update is requested before SDS
-        wiced_start_timer(&ble.conn_param_update_timer,15000); //15 seconds. timeout in ms
+        if(ble_params_is_expected() == FALSE)
+        {
+            //start 15 second timer to make sure connection param update is requested before SDS
+            WICED_BT_TRACE("\n%s start 15s timer", __FUNCTION__);
+            wiced_start_timer(&ble.conn_param_update_timer, 15000); //15 seconds. timeout in ms
+        }
         break;
     }
 
@@ -1185,6 +1189,37 @@ void ble_setProtocol(uint8_t newProtocol)
         //otherwise register the boot mode table
         wiced_blehidd_register_report_table(bootModeGattMap, sizeof(bootModeGattMap)/sizeof(bootModeGattMap[0]));
     }
+}
+
+/********************************************************************************
+ * Function Name: UINT8 ble_params_is_expected()
+ ********************************************************************************
+ * Summary: Check the RCU ble parameters is updated to expected setting or not
+ *
+ * Parameters:
+ *  none
+ *
+ * Return:
+ *  FALSE : not expected configuration ble parameters
+ *  TRUE  : expected configuration ble parameters
+ *
+ *******************************************************************************/
+wiced_bool_t ble_params_is_expected(void)
+{
+    wiced_bool_t ret = 0;
+
+    if ((wiced_blehidd_get_connection_interval() <  hidd_cfg_p_scan()->conn_min_interval) ||
+        (wiced_blehidd_get_connection_interval() > hidd_cfg_p_scan()->conn_max_interval) ||
+        (wiced_blehidd_get_peripheral_latency() != hidd_cfg_p_scan()->conn_latency))
+    {
+        ret = FALSE;
+    }
+    else
+    {
+        ret = TRUE;
+    }
+
+    return ret;
 }
 
 /********************************************************************************
